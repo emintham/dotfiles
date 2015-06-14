@@ -1,0 +1,21 @@
+[user]
+	name = Emin Tham
+	email = emintham@gmail.com
+[alias]
+    ci = commit
+    co = checkout
+    st = status
+    br = branch
+    rb = rebase
+    pu = push
+    soft = reset --soft
+    app = stash apply
+    del = branch -D
+    ours = checkout --ours
+    theirs = checkout --theirs
+[push]
+    default = simple
+[core]
+    editor = /usr/local/bin/vim
+[rerere]
+    enable = true
