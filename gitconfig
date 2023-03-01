@@ -1,0 +1,59 @@
+[user]
+    name = Emin Tham
+    email = emintham@emintham
+[core]
+    editor = nvim
+    whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
+    excludesfile = ~/.gitignore
+    attributesfile = ~/.gitattributes
+[alias]
+    aa = add .
+    ac = !git add . && git commit
+    aca = !git add . && git commit --amend
+    aup = add -up
+    br = branch
+    ca = commit --amend
+    ci = commit
+    co = checkout
+    cof = !git for-each-ref --format='%(refname:short)' refs/heads | sk | xargs git checkout
+    cp = cherry-pick
+    cpc = cherry-pick --continue
+    del = branch -D
+    df = !git for-each-ref --format='%(refname:short)' refs/heads | sk | xargs git branch -D
+    fpoh = push -f origin HEAD
+    h = rev-parse --short HEAD
+    l = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    poh = push origin HEAD
+    rb = rebase
+    rbc = rebase --continue
+    rbf = !git for-each-ref --format='%(refname:short)' refs/heads | sk | xargs git rebase
+    rs = restore --staged
+    st = status
+    su = stash --keep-index # Keep stuff not `git add`ed
+    sp = stash push -m
+    sn = show --name-only
+    rbm = "!f() { \
+              INITIAL_STASH_SIZE=$(git stash list | wc -l); \
+              INITIAL_BRANCH=$(git rev-parse --abbrev-ref HEAD); \
+              git add . && \
+                git stash &&\
+                git checkout master && \
+                git pull && \
+                git checkout $INITIAL_BRANCH && \
+                git rebase master; \
+              CURRENT_STASH_SIZE=$(git stash list | wc -l); \
+              if [[ $INITIAL_STASH_SIZE != $CURRENT_STASH_SIZE ]]; then \
+                git stash pop;\
+              fi \
+            }; f"
+    mas = !git checkout master && git pull
+    mer = merge
+    vim = !nvim $(git ls-files -m)
+[pack]
+    useSparse = true
+[submodule]
+    recurse = true
+[merge]
+    renamelimit = 2686
+[pull]
+    rebase = true
