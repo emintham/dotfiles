@@ -22,7 +22,7 @@ function commits() {
 
   if [ $# -eq 0 ]; then
     echo $usage
-  elif [ $# -eq 1]; then
+  elif [ $# -eq 1 ]; then
     g l | rg "$(git config user.name)" | head -$1
   elif [ $# -eq 2 ]; then
     g l | rg $1 | head -$2
