@@ -2,5 +2,6 @@
 #
 
 cp gitconfig ~/.gitconfig
-cp aliases ~/aliases
+cp aliases.zsh ~/aliases.zsh
 echo 'source $HOME/aliases' >> ~/.bashrc
+echo 'source $HOME/aliases' >> ~/.zshrc

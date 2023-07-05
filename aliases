@@ -1,4 +1,0 @@
-alias g="git"
-alias rg="rg --type-add 'proto:*.proto' --type-add 'build:BUILD' --type-add 'sol:*.sol'"
-alias ls="exa"
-alias vi="nvim"

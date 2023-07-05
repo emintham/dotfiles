@@ -15,23 +15,19 @@
     ca = commit --amend
     ci = commit
     co = checkout
-    cof = !git for-each-ref --format='%(refname:short)' refs/heads | sk | xargs git checkout
+    cof = !git for-each-ref --format='%(refname:short)' refs/heads | fzf | xargs git checkout
     cp = cherry-pick
     cpc = cherry-pick --continue
     del = branch -D
-    df = !git for-each-ref --format='%(refname:short)' refs/heads | sk | xargs git branch -D
+    df = !git for-each-ref --format='%(refname:short)' refs/heads | fzf | xargs git branch -D
     fpoh = push -f origin HEAD
     h = rev-parse --short HEAD
     l = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    last = !git diff-tree --no-commit-id --name-only HEAD -r
     poh = push origin HEAD
     rb = rebase
     rbc = rebase --continue
-    rbf = !git for-each-ref --format='%(refname:short)' refs/heads | sk | xargs git rebase
-    rs = restore --staged
-    st = status
-    su = stash --keep-index # Keep stuff not `git add`ed
-    sp = stash push -m
-    sn = show --name-only
+    rbf = !git for-each-ref --format='%(refname:short)' refs/heads | fzf | xargs git rebase
     rbm = "!f() { \
               INITIAL_STASH_SIZE=$(git stash list | wc -l); \
               INITIAL_BRANCH=$(git rev-parse --abbrev-ref HEAD); \
@@ -46,6 +42,11 @@
                 git stash pop;\
               fi \
             }; f"
+    rs = restore --staged
+    sn = show --name-only
+    sp = stash push -m
+    st = status
+    su = stash --keep-index # Keep stuff not `git add`ed
     mas = !git checkout master && git pull
     mer = merge
     vim = !nvim $(git ls-files -m)
