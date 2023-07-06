@@ -28,7 +28,8 @@
     rb = rebase
     rbc = rebase --continue
     rbf = !git for-each-ref --format='%(refname:short)' refs/heads | fzf | xargs git rebase
-    rbm = "!f() { \
+    rbm = rebase master
+    rbmp = "!f() { \
               INITIAL_STASH_SIZE=$(git stash list | wc -l); \
               INITIAL_BRANCH=$(git rev-parse --abbrev-ref HEAD); \
               git add . && \
