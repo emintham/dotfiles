@@ -1,8 +1,9 @@
 alias g="git"
-alias rg="rg --type-add 'proto:*.proto' --type-add 'build:BUILD' --type-add 'test:*[tT]est*'"
 alias ls="exa"
 alias vi="nvim"
 alias ff="firefox"
+alias t="tmux a -t"
+alias rpi="ssh jay@rpi.local"
 
 if [ "$(uname -s)" = "Linux" ]; then
   alias pbcopy='xclip -selection clipboard'
@@ -11,10 +12,12 @@ if [ "$(uname -s)" = "Linux" ]; then
 fi
 
 # Rust
+alias cb="cargo build"
 alias cbr="cargo build --release"
 alias cc="cargo clippy"
 alias cr="cargo run"
-
+alias ct="cargo test"
+alias csp="cargo sqlx prepare"
 
 # Get the most recent commits by a user
 function commits() {
@@ -22,7 +25,7 @@ function commits() {
 
   if [ $# -eq 0 ]; then
     echo $usage
-  elif [ $# -eq 1 ]; then
+  elif [ $# -eq 1]; then
     g l | rg "$(git config user.name)" | head -$1
   elif [ $# -eq 2 ]; then
     g l | rg $1 | head -$2
@@ -30,6 +33,7 @@ function commits() {
     echo "Invalid number of arguments. $usage"
   fi
 }
+export -f commits
 
 # Search for a number of strings in a chain using rg
 function chained_rg() {
@@ -58,3 +62,28 @@ function chained_rg() {
   # Execute the command
   eval "$cmd"
 }
+export -f chained_rg
+
+mkcd() {
+  # Check if a directory name was provided
+  if [ -z "$1" ]; then
+    echo "Usage: mkcd <directory_name>"
+    return 1
+  fi
+
+  # Create the directory
+  mkdir -p "$1" &&
+
+  # Change into the newly created directory
+  cd "$1"
+}
+export -f mkcd
+
+# pipe-able function to sort files by latest creation time
+# e.g. ls | sort_by_latest_creation
+function sort_by_latest_creation() {
+  xargs -I {} sh -c 'stat --printf="%W\t%n\n" "$1"' _ {} \
+    | sort -t $'\t' -k1,1nr \
+    | cut -d $'\t' -f2-
+}
+export -f sort_by_latest_creation

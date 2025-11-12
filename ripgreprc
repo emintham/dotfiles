@@ -1,0 +1,4 @@
+--type-add=proto:*.proto
+--type-add=build:BUILD{,.bazel}
+--type-add=test:*[tT]est*
+--type-add=pbtxt:*.pbtxt
