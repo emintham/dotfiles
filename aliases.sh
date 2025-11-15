@@ -25,7 +25,7 @@ function commits() {
 
   if [ $# -eq 0 ]; then
     echo $usage
-  elif [ $# -eq 1]; then
+  elif [ $# -eq 1 ]; then
     g l | rg "$(git config user.name)" | head -$1
   elif [ $# -eq 2 ]; then
     g l | rg $1 | head -$2
@@ -41,6 +41,12 @@ function chained_rg() {
 
   if [ $# -eq 0 ]; then
     echo "No strings provided."
+    return 1
+  fi
+
+  # Check if rg is installed
+  if ! command -v rg &> /dev/null; then
+    echo "Error: ripgrep (rg) is not installed."
     return 1
   fi
 
@@ -82,6 +88,12 @@ export -f mkcd
 # pipe-able function to sort files by latest creation time
 # e.g. ls | sort_by_latest_creation
 function sort_by_latest_creation() {
+  # Check if stat command is available
+  if ! command -v stat &> /dev/null; then
+    echo "Error: stat command is not available."
+    return 1
+  fi
+
   xargs -I {} sh -c 'stat --printf="%W\t%n\n" "$1"' _ {} \
     | sort -t $'\t' -k1,1nr \
     | cut -d $'\t' -f2-
