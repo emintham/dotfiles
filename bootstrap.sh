@@ -418,6 +418,42 @@ install_rust_tools() {
   else
     print_success "bat already installed"
   fi
+
+  # zoxide (smarter cd)
+  if ! command_exists zoxide; then
+    print_info "Installing zoxide..."
+    if [ "$OS" = "macos" ]; then
+      brew install zoxide
+    elif [ "$OS" = "linux" ]; then
+      case "$DISTRO" in
+        ubuntu|debian|fedora|rhel|centos)
+          cargo install zoxide --locked
+          ;;
+        arch|manjaro)
+          sudo pacman -S --noconfirm zoxide
+          ;;
+        *)
+          cargo install zoxide --locked
+          ;;
+      esac
+    fi
+    print_success "zoxide installed"
+  else
+    print_success "zoxide already installed"
+  fi
+
+  # fastmod (code refactoring tool)
+  if ! command_exists fastmod; then
+    print_info "Installing fastmod..."
+    if [ "$OS" = "macos" ]; then
+      brew install fastmod
+    else
+      cargo install fastmod
+    fi
+    print_success "fastmod installed"
+  else
+    print_success "fastmod already installed"
+  fi
 }
 
 # Install sqlx-cli (referenced in aliases as cargo sqlx)
@@ -455,6 +491,64 @@ install_xclip() {
   fi
 }
 
+# Install jq (JSON processor)
+install_jq() {
+  if command_exists jq; then
+    print_success "jq already installed ($(jq --version))"
+    return 0
+  fi
+
+  print_info "Installing jq..."
+  if [ "$OS" = "macos" ]; then
+    brew install jq
+  elif [ "$OS" = "linux" ]; then
+    case "$DISTRO" in
+      ubuntu|debian)
+        sudo apt install -y jq
+        ;;
+      fedora|rhel|centos)
+        sudo dnf install -y jq
+        ;;
+      arch|manjaro)
+        sudo pacman -S --noconfirm jq
+        ;;
+    esac
+  fi
+  print_success "jq installed"
+}
+
+# Install htop (interactive process viewer)
+install_htop() {
+  install_package htop htop htop htop htop
+}
+
+# Install Node Version Manager (nvm)
+install_nvm() {
+  if [ -d "$HOME/.nvm" ] || [ -n "$NVM_DIR" ]; then
+    print_success "nvm already installed"
+    return 0
+  fi
+
+  print_info "Installing nvm (Node Version Manager)..."
+  # Get the latest nvm version
+  NVM_VERSION="v0.39.7"
+  curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" | bash
+
+  # Source nvm to make it available in current session
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+  print_success "nvm installed"
+
+  # Install latest LTS version of Node.js
+  if command_exists nvm; then
+    print_info "Installing Node.js LTS via nvm..."
+    nvm install --lts
+    nvm use --lts
+    print_success "Node.js LTS installed ($(node --version 2>/dev/null || echo 'node not in current PATH'))"
+  fi
+}
+
 # Main installation flow
 main() {
   print_info "Starting bootstrap process..."
@@ -486,12 +580,15 @@ main() {
   install_neovim
   install_tmux
   install_fzf
+  install_jq
+  install_htop
   echo
 
   # Install programming languages
   print_info "Installing programming languages..."
   install_rust
   install_go
+  install_nvm
   echo
 
   # Install Rust-based CLI tools
@@ -517,15 +614,22 @@ main() {
   echo "  - Rust: $(rustc --version 2>/dev/null || echo 'not found')"
   echo "  - Cargo: $(cargo --version 2>/dev/null || echo 'not found')"
   echo "  - Go: $(go version 2>/dev/null || echo 'not found')"
+  echo "  - Node.js: $(node --version 2>/dev/null || echo 'not found')"
+  echo "  - nvm: $(nvm --version 2>/dev/null || echo 'not found')"
   echo "  - Neovim: $(nvim --version 2>/dev/null | head -n1 || echo 'not found')"
   echo "  - tmux: $(tmux -V 2>/dev/null || echo 'not found')"
   echo "  - fzf: $(fzf --version 2>/dev/null || echo 'not found')"
+  echo "  - jq: $(jq --version 2>/dev/null || echo 'not found')"
+  echo "  - htop: $(htop --version 2>/dev/null | head -n1 || echo 'not found')"
   echo "  - ripgrep: $(rg --version 2>/dev/null | head -n1 || echo 'not found')"
   echo "  - fd: $(fd --version 2>/dev/null || fdfind --version 2>/dev/null || echo 'not found')"
   echo "  - exa: $(exa --version 2>/dev/null | head -n1 || echo 'not found')"
   echo "  - bat: $(bat --version 2>/dev/null || echo 'not found')"
+  echo "  - zoxide: $(zoxide --version 2>/dev/null || echo 'not found')"
+  echo "  - fastmod: $(fastmod --version 2>/dev/null || echo 'not found')"
   echo
   print_warning "Please restart your shell or run 'source ~/.bashrc' (or ~/.zshrc) to use the new tools"
+  print_info "For nvm, you may need to reload your shell config to access it"
   print_info "You may also want to run './install.sh' to set up your dotfiles"
 }
 
