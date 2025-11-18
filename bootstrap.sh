@@ -549,6 +549,35 @@ install_nvm() {
   fi
 }
 
+# Install Python using uv
+install_python_uv() {
+  if command_exists uv; then
+    print_success "uv already installed ($(uv --version))"
+  else
+    print_info "Installing uv (Python package installer)..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+
+    # Add uv to PATH for current session
+    export PATH="$HOME/.cargo/bin:$PATH"
+    print_success "uv installed"
+  fi
+
+  # Check if python3 is installed
+  if command_exists python3; then
+    print_success "Python already installed ($(python3 --version))"
+  else
+    print_info "Installing Python via uv..."
+    if command_exists uv; then
+      # uv can install Python versions
+      uv python install 3.12
+      print_success "Python installed via uv"
+    else
+      print_warning "uv not available in current session, Python installation skipped"
+      print_info "Please restart your shell and run 'uv python install 3.12' to install Python"
+    fi
+  fi
+}
+
 # Main installation flow
 main() {
   print_info "Starting bootstrap process..."
@@ -588,6 +617,7 @@ main() {
   print_info "Installing programming languages..."
   install_rust
   install_go
+  install_python_uv
   install_nvm
   echo
 
@@ -614,6 +644,8 @@ main() {
   echo "  - Rust: $(rustc --version 2>/dev/null || echo 'not found')"
   echo "  - Cargo: $(cargo --version 2>/dev/null || echo 'not found')"
   echo "  - Go: $(go version 2>/dev/null || echo 'not found')"
+  echo "  - Python: $(python3 --version 2>/dev/null || echo 'not found')"
+  echo "  - uv: $(uv --version 2>/dev/null || echo 'not found')"
   echo "  - Node.js: $(node --version 2>/dev/null || echo 'not found')"
   echo "  - nvm: $(nvm --version 2>/dev/null || echo 'not found')"
   echo "  - Neovim: $(nvim --version 2>/dev/null | head -n1 || echo 'not found')"
