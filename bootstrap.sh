@@ -522,6 +522,11 @@ install_htop() {
   install_package htop htop htop htop htop
 }
 
+# Install tree (directory structure visualization)
+install_tree() {
+  install_package tree tree tree tree tree
+}
+
 # Install Node Version Manager (nvm)
 install_nvm() {
   if [ -d "$HOME/.nvm" ] || [ -n "$NVM_DIR" ]; then
@@ -611,6 +616,7 @@ main() {
   install_fzf
   install_jq
   install_htop
+  install_tree
   echo
 
   # Install programming languages
@@ -653,6 +659,7 @@ main() {
   echo "  - fzf: $(fzf --version 2>/dev/null || echo 'not found')"
   echo "  - jq: $(jq --version 2>/dev/null || echo 'not found')"
   echo "  - htop: $(htop --version 2>/dev/null | head -n1 || echo 'not found')"
+  echo "  - tree: $(tree --version 2>/dev/null | head -n1 || echo 'not found')"
   echo "  - ripgrep: $(rg --version 2>/dev/null | head -n1 || echo 'not found')"
   echo "  - fd: $(fd --version 2>/dev/null || fdfind --version 2>/dev/null || echo 'not found')"
   echo "  - exa: $(exa --version 2>/dev/null | head -n1 || echo 'not found')"
