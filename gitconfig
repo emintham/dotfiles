@@ -24,20 +24,21 @@
     h = rev-parse --short HEAD
     l = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
     last = !git diff-tree --no-commit-id --name-only HEAD -r
+    pp = !git pull && git prune
     poh = push origin HEAD
     rb = rebase
     rbc = rebase --continue
     rbf = !git for-each-ref --format='%(refname:short)' refs/heads | fzf | xargs git rebase
-    rbm = rebase master
+    rbm = "!f() { target=$(git rev-parse --verify main master 2>/dev/null | head -n 1); echo "Rebasing onto $target..."; git rebase $target; }; f"
     rbmp = "!f() { \
               INITIAL_STASH_SIZE=$(git stash list | wc -l); \
               INITIAL_BRANCH=$(git rev-parse --abbrev-ref HEAD); \
               git add . && \
                 git stash &&\
-                git checkout master && \
+                git checkout main && \
                 git pull && \
                 git checkout $INITIAL_BRANCH && \
-                git rebase master; \
+                git rebase main; \
               CURRENT_STASH_SIZE=$(git stash list | wc -l); \
               if [[ $INITIAL_STASH_SIZE != $CURRENT_STASH_SIZE ]]; then \
                 git stash pop;\
@@ -47,8 +48,9 @@
     sn = show --name-only
     sp = stash push -m
     st = status
+    sa = !git add . && git stash push -m
     su = stash --keep-index # Keep stuff not `git add`ed
-    mas = !git checkout master && git pull
+    mas = !git checkout main && git pull
     mer = merge
     vim = !nvim $(git ls-files -m)
 [pack]
@@ -59,3 +61,5 @@
     renamelimit = 2686
 [pull]
     rebase = true
+[init]
+    defaultBranch = main

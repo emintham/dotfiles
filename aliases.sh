@@ -1,9 +1,15 @@
-alias g="git"
-alias ls="exa"
 alias vi="nvim"
-alias ff="firefox"
 alias t="tmux a -t"
+alias p="pnpm"
+alias ls="exa"
+alias ge="gemini"
+alias g="git"
+alias fm="fastmod"
+alias cl="claude"
+
+# Project specific
 alias rpi="ssh jay@rpi.local"
+alias td="p tauri dev"
 
 if [ "$(uname -s)" = "Linux" ]; then
   alias pbcopy='xclip -selection clipboard'
@@ -12,12 +18,14 @@ if [ "$(uname -s)" = "Linux" ]; then
 fi
 
 # Rust
-alias cb="cargo build"
-alias cbr="cargo build --release"
-alias cc="cargo clippy"
-alias cr="cargo run"
-alias ct="cargo test"
-alias csp="cargo sqlx prepare"
+alias c="cargo"
+alias cb="c build"
+alias cbr="cb --release"
+alias cc="c clippy"
+alias cr="c run"
+alias ct="c test"
+alias csp="c sqlx prepare"
+alias cc="c check"
 
 # Get the most recent commits by a user
 function commits() {
@@ -99,3 +107,40 @@ function sort_by_latest_creation() {
     | cut -d $'\t' -f2-
 }
 export -f sort_by_latest_creation
+
+# Setup a new bare-worktree repo
+# Usage: gcl <repo>
+function gcl() {
+  local url=$1
+  local basename=$(basename "$url" .git)
+
+  mkcd "$basename"
+
+  git clone --bare "$url" .bare
+
+  echo "gitdir: .bare" > .git
+  git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
+
+  git worktree add main
+}
+export -f gcl
+
+# Creates a worktree
+# Usage: wt <branch>
+function wt() {
+  local branch=$1
+
+  git worktree add "../$branch" -b "$branch"
+  cd "../$branch"
+}
+export -f wt
+
+# Deletes a worktree
+# Usage: rmwt <branch>
+function rmwt() {
+  local branch=$1
+
+  git worktree remove "../$branch"
+  rm -rf "../$branch"
+}
+export -f rmwt
